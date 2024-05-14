@@ -2,22 +2,17 @@ import pandas as pd
 import csv
 import sqlite3
 
-file_name = "wiki/data/Wikidata_Database_reports_List_of_properties_all_1.csv"
-data = pd.read_csv(file_name) 
-
-
-
 def creer_table_sqlite(file_name, nom_table, connexion):
     # Vérifier si la table existe déjà
     cursor = connexion.cursor()
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{nom_table}'")
     table_existante = cursor.fetchone()
-    
-    # Si la table existe déjà, ne rien faire0
+
+    # Si la table existe déjà, ne rien faire
     if table_existante:
         print("La table existe déjà.")
         return
-    
+
     # Si la table n'existe pas, procéder à sa création
     with open(file_name, 'r', newline='') as csvfile:
         lecteur_csv = csv.reader(csvfile)
@@ -27,7 +22,7 @@ def creer_table_sqlite(file_name, nom_table, connexion):
         for ligne in lecteur_csv:
             requete_insertion = f"INSERT INTO {nom_table} VALUES ({', '.join(['?' for _ in colonnes])})"
             connexion.execute(requete_insertion, ligne)
-    
+
     connexion.commit()
 
 def afficher_ligne_par_numero(nom_table, numero_ligne, connexion):
@@ -40,14 +35,20 @@ def afficher_ligne_par_numero(nom_table, numero_ligne, connexion):
 # Se connecter à la base de données SQLite
 connexion_sqlite = sqlite3.connect('ma_base_de_donnees.db')
 
+# Nom de la table que vous souhaitez créer
+nom_table = 'ma_table'
+
+# Nom du fichier CSV contenant les données
+file_name = "wiki/data/Wikidata_Database_reports_List_of_properties_all_1.csv"
+
+# Créer la table et insérer les données du fichier CSV
+creer_table_sqlite(file_name, nom_table, connexion_sqlite)
+
 # Demander à l'utilisateur de saisir un numéro de ligne
 numero_ligne = input("Veuillez entrer le numéro de la ligne que vous souhaitez afficher (entre P6 et P12615) (attention il peut y avoir des numéros qui ne correspondent a aucune ligne): ")
 
-# Nom de la table SQL
-nom_table_sql = 'ma_table'
-
 # Afficher la ligne correspondante
-ligne = afficher_ligne_par_numero(nom_table_sql, numero_ligne, connexion_sqlite)
+ligne = afficher_ligne_par_numero(nom_table, numero_ligne, connexion_sqlite)
 if ligne:
     print("Ligne correspondante :")
     print(ligne)
