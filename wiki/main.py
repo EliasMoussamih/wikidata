@@ -14,7 +14,7 @@ def creer_table_sqlite(file_name, nom_table, connexion):
         return
 
     # Si la table n'existe pas, procéder à sa création
-    with open(file_name, 'r', newline='') as csvfile:
+    with open(file_name, 'r', newline='', encoding='utf-8') as csvfile:
         lecteur_csv = csv.reader(csvfile)
         colonnes = next(lecteur_csv)
         requete_creation_table = f"CREATE TABLE {nom_table} ({', '.join([f'{colonne} TEXT' for colonne in colonnes])})"
@@ -39,7 +39,7 @@ connexion_sqlite = sqlite3.connect('ma_base_de_donnees.db')
 nom_table = 'ma_table'
 
 # Nom du fichier CSV contenant les données
-file_name = "wiki/data/Wikidata_Database_reports_List_of_properties_all_1.csv"
+file_name = "data/Wikidata_Database_reports_List_of_properties_all_1.csv"
 
 # Créer la table et insérer les données du fichier CSV
 creer_table_sqlite(file_name, nom_table, connexion_sqlite)
