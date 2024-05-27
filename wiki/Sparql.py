@@ -3,6 +3,7 @@ import csv
 from SPARQLWrapper import SPARQLWrapper, JSON
 import tkinter as tk
 from tkinter import filedialog
+import shutil
 
 # Définir l'endpoint SPARQL (par exemple, Wikidata)
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
@@ -81,5 +82,5 @@ if download == "oui":
     root.withdraw()  # Cacher la fenêtre principale
     file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
     if file_path:
-        os.rename(csv_file, file_path)
+        shutil.copyfile(csv_file, file_path)
         print(f"Fichier CSV téléchargé à l'emplacement : {file_path}")
