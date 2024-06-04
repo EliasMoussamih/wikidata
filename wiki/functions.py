@@ -208,6 +208,23 @@ def getSupport():
 
 # fin de la fonction 7
 
+
+def headCoverege():
+
+    # Obtenir les résultats des fonctions externes
+    support_count = int(getSupport())
+    num_tuples = int(getNumTuples())
+
+    if num_tuples == 0:
+        return "Division by zero error"
+
+    division_result = support_count / num_tuples
+    print("\n", "Le résultat est de : ", division_result)
+    return division_result
+
+# fin de la fonction 8 
+
+
 def getConfidence():
     support = int(getSupport())
     lose = int(getLose())
@@ -217,6 +234,7 @@ def getConfidence():
         print(f"La confiance est : {confidence}")
     else:
         print("Erreur : Division par zéro. Le dénominateur est zéro.")
+
 # fin de la fonction 9
 
 def getLose():
@@ -247,6 +265,8 @@ def getLose():
 
 # fin de la fonction 10
 
+def getAnotherSupport():
+    return True
 
 def download_csv():
     csv_file = 'data.csv'
@@ -257,3 +277,5 @@ def download_csv():
     if file_path:
         shutil.copyfile(csv_file, file_path)
         print(f"Fichier CSV téléchargé à l'emplacement : {file_path}")
+
+# fin de la fonction 12

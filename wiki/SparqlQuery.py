@@ -32,10 +32,14 @@ def main():
         fun()
     elif choice == '7':
         getSupport()
+    elif choice == '8':
+        headCoverege()
     elif choice == '9':
         getConfidence()
     elif choice == '10':
         getLose()
+    elif choice == '11':
+        getAnotherSupport()
     elif choice == '12':
         download_csv()
     else:
