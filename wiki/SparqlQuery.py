@@ -28,8 +28,14 @@ def main():
         getFunctionnalDependencies()
     elif choice == '5':
         getNumTuples()
+    elif choice == '6':
+        fun()
     elif choice == '7':
         getSupport()
+    elif choice == '9':
+        getConfidence()
+    elif choice == '10':
+        getLose()
     elif choice == '12':
         download_csv()
     else:

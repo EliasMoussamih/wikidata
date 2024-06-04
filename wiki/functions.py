@@ -1,4 +1,5 @@
 # functions.py
+from urllib.error import HTTPError
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 import os
@@ -31,6 +32,8 @@ def getDomainCardinality():
     # Exécuter les requêtes et obtenir les résultats
     dom_R1 = execute_query(rel1)
     print(f"le nombre d'entités pour la relation {relation1} est de : {dom_R1}")
+
+    return dom_R1
 
 # Fin de la fonction 1
 
@@ -161,7 +164,19 @@ def getNumTuples():
     count = count_tuples(relation)
     print(f"Le nombre de tuples liés par la relation {relation} est : {count}")
 
+    return count
+
 # fin de la fonction 5
+
+def fun():
+    x = int(getDomainCardinality())
+    y = int(getNumTuples())
+        
+    z = x / y
+    print(f"Voici le résultat de fonction 1/fonction 5 {z}")
+    return z
+
+# fin de la fonction 6
 
 def getSupport():
     def check_implication(relation1, relation2, relation3):
@@ -189,7 +204,49 @@ def getSupport():
     result = check_implication(relation1, relation2, relation3)
     print(f"Le nombre de situations où {relation1} et {relation2} impliquent {relation3} est : {result}")
 
+    return result 
+
 # fin de la fonction 7
+
+def getConfidence():
+    support = int(getSupport())
+    lose = int(getLose())
+
+    if lose != 0:
+        confidence = support / lose
+        print(f"La confiance est : {confidence}")
+    else:
+        print("Erreur : Division par zéro. Le dénominateur est zéro.")
+# fin de la fonction 9
+
+def getLose():
+    def check_implication(relation1, relation2):
+        sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
+        query = f"""
+        SELECT (COUNT(?x) AS ?count)
+        WHERE {{
+        ?x wdt:{relation1} ?y.
+        ?x wdt:{relation2} ?z.
+        }}
+        """
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        count = results['results']['bindings'][0]['count']['value']
+        return count
+
+    # Demander les relations à l'utilisateur
+    relation1 = input("Entrez la première relation (par exemple, P26) : ")
+    relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
+
+    # Exécuter la fonction et afficher le résultat
+    result = check_implication(relation1, relation2)
+    print(f"Le nombre de situations où {relation1} et {relation2} est : {result}")
+
+    return result
+
+# fin de la fonction 10
+
 
 def download_csv():
     csv_file = 'data.csv'
