@@ -186,7 +186,7 @@ def getSupport():
         WHERE {{
         ?x wdt:{relation1} ?y.
         ?x wdt:{relation2} ?z.
-        ?x wdt:{relation3} ?w.
+        ?z wdt:{relation3} ?y.
         }}
         """
         sparql.setQuery(query)
