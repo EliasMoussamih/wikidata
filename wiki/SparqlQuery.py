@@ -19,25 +19,25 @@ def main():
     choice = input("Choisissez une option : ")
 
     if choice == '1':
-        getDomainCardinality()
+        getDomainCardinality("P6")
     elif choice == '2':
         download_csv()
     elif choice == '3':
-        getCoocurence()
+        getCoocurence("P6", "P26")
     elif choice == '4':
-        getFunctionnalDependencies()
+        getFunctionnalDependencies("Q76", "P40")
     elif choice == '5':
-        getNumTuples()
+        getNumTuples("P40")
     elif choice == '6':
-        fun()
+        fun("P40")
     elif choice == '7':
         getSupport("P26","P40","P25")
     elif choice == '8':
-        headCoverege()
+        headCoverege("P26","P40","P25")
     elif choice == '9':
-        getConfidence()
+        getConfidence("P26","P40","P25")
     elif choice == '10':
-        getLose()
+        getLose("P26","P40")
     elif choice == '11':
         getAnotherSupport("P26","P40","P25")
     else:
