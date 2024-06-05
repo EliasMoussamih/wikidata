@@ -11,10 +11,10 @@ import shutil
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
 
 
-def getDomainCardinality():
-    relation1 = input("Quelle est votre relation dont vous voulez savoir le nombre d'entités? (les relations sont entre P6 et P12615) \n" +
-                    "Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
-                    "Attention à mettre le P en majuscule \n")
+def getDomainCardinality(relation1):
+    #relation1 = input("Quelle est votre relation dont vous voulez savoir le nombre d'entités? (les relations sont entre P6 et P12615) \n" +
+                    #"Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
+                    #"Attention à mettre le P en majuscule \n")
 
     rel1 = f"""
     SELECT (COUNT(DISTINCT ?x) AS ?count)
@@ -37,13 +37,13 @@ def getDomainCardinality():
 
 # Fin de la fonction 1
 
-def getCoocurence():
+def getCoocurence(relation1, relation2):
     # Demander les relations
-    relation1 = input("Quelle est votre première relation ? (les relations sont entre P6 et P12615) \n" +
-                    "Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
-                    "Attention à mettre le P en majuscule \n")
+    #relation1 = input("Quelle est votre première relation ? (les relations sont entre P6 et P12615) \n" +
+                    #"Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
+                    #"Attention à mettre le P en majuscule \n")
 
-    relation2 = input("Quelle est votre deuxième relation ? \n")
+    #relation2 = input("Quelle est votre deuxième relation ? \n")
 
     # Définir les requêtes SPARQL
     liaison = f"""
@@ -106,7 +106,7 @@ def getCoocurence():
 
 # fin de la fonction 3
 
-def getFunctionnalDependencies():
+def getFunctionnalDependencies(element, property):
     def check_multiple_relations(element, property):
         query = f"""
         SELECT (COUNT(DISTINCT ?y) AS ?count)
@@ -128,8 +128,8 @@ def getFunctionnalDependencies():
 
     while True:
         # Demander à l'utilisateur de saisir l'élément et la propriété
-        element = input("Quel est l'élément que vous voulez vérifier ? (par ex., Q76 pour Barack Obama) \n")
-        property = input("Quelle est la propriété que vous voulez vérifier ? (par ex., P40 pour parent) \n")
+        #element = input("Quel est l'élément que vous voulez vérifier ? (par ex., Q76 pour Barack Obama) \n")
+        #property = input("Quelle est la propriété que vous voulez vérifier ? (par ex., P40 pour parent) \n")
         
         # Vérifier si l'élément a plusieurs relations distinctes pour la propriété
         result = check_multiple_relations(element, property)
@@ -142,7 +142,7 @@ def getFunctionnalDependencies():
 
 # fin de la fonction 4
 
-def getNumTuples():
+def getNumTuples(relation):
     def count_tuples(relation):
         query = f"""
         SELECT (COUNT(*) AS ?count)
@@ -160,7 +160,7 @@ def getNumTuples():
         return count
     
         
-    relation = input("Quelle est la relation que vous voulez vérifier ? (par ex., P40 pour parent) \n")
+    #relation = input("Quelle est la relation que vous voulez vérifier ? (par ex., P40 pour parent) \n")
     count = count_tuples(relation)
     print(f"Le nombre de tuples liés par la relation {relation} est : {count}")
 
@@ -178,7 +178,7 @@ def fun():
 
 # fin de la fonction 6
 
-def getSupport():
+def getSupport(relation1, relation2, relation3):
     def check_implication(relation1, relation2, relation3):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -196,9 +196,9 @@ def getSupport():
         return count
 
     # Demander les relations à l'utilisateur
-    relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
-    relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
+    #relation1 = input("Entrez la première relation (par exemple, P26) : ")
+    #relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
+    #relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
 
     # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2, relation3)

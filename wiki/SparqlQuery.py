@@ -31,7 +31,7 @@ def main():
     elif choice == '6':
         fun()
     elif choice == '7':
-        getSupport()
+        getSupport("P26","P40","P25")
     elif choice == '8':
         headCoverege()
     elif choice == '9':
