@@ -39,7 +39,7 @@ def main():
     elif choice == '10':
         getLose()
     elif choice == '11':
-        getAnotherSupport()
+        getAnotherSupport("P26","P40","P25")
     else:
         print("Option invalide. Veuillez choisir une option valide.")
 

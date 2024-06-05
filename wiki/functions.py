@@ -168,12 +168,12 @@ def getNumTuples(relation):
 
 # fin de la fonction 5
 
-def fun():
-    DomainCardinality = int(getDomainCardinality())
-    NumTuples = int(getNumTuples())
+def fun(relation):
+    DomainCardinality = int(getDomainCardinality(relation))
+    NumTuples = int(getNumTuples(relation))
         
     fun = DomainCardinality / NumTuples
-    print(f"Voici le résultat de fonction 1/fonction 5 {z}")
+    print(f"Voici le résultat de fonction 1/fonction 5 {fun}")
     return fun
 
 # fin de la fonction 6
@@ -209,11 +209,11 @@ def getSupport(relation1, relation2, relation3):
 # fin de la fonction 7
 
 
-def headCoverege():
+def headCoverege(relation1, relation2, relation3):
 
     # Obtenir les résultats des fonctions externes
-    support_count = int(getSupport())
-    num_tuples = int(getNumTuples())
+    support_count = int(getSupport(relation1, relation2, relation3))
+    num_tuples = int(getNumTuples(relation1))
 
     if num_tuples == 0:
         return "Division by zero error"
@@ -225,9 +225,9 @@ def headCoverege():
 # fin de la fonction 8 
 
 
-def getConfidence():
-    support = int(getSupport())
-    lose = int(getLose())
+def getConfidence(relation1, relation2, relation3):
+    support = int(getSupport(relation1, relation2, relation3))
+    lose = int(getLose(relation1, relation2))
 
     if lose != 0:
         confidence = support / lose
@@ -237,7 +237,7 @@ def getConfidence():
 
 # fin de la fonction 9
 
-def getLose():
+def getLose(relation1, relation2):
     def check_implication(relation1, relation2):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -254,8 +254,8 @@ def getLose():
         return count
 
     # Demander les relations à l'utilisateur
-    relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
+    # relation1 = input("Entrez la première relation (par exemple, P26) : ")
+    # relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
 
     # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2)
@@ -265,7 +265,7 @@ def getLose():
 
 # fin de la fonction 10
 
-def getAnotherSupport():
+def getAnotherSupport(relation1, relation2, relation3):
     def check_implication(relation1, relation2, relation3):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -283,9 +283,9 @@ def getAnotherSupport():
         return count
 
     # Demander les relations à l'utilisateur
-    relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
-    relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
+    # relation1 = input("Entrez la première relation (par exemple, P26) : ")
+    # relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
+    # relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
 
     # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2, relation3)
