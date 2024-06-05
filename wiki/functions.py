@@ -169,12 +169,12 @@ def getNumTuples():
 # fin de la fonction 5
 
 def fun():
-    x = int(getDomainCardinality())
-    y = int(getNumTuples())
+    DomainCardinality = int(getDomainCardinality())
+    NumTuples = int(getNumTuples())
         
-    z = x / y
+    fun = DomainCardinality / NumTuples
     print(f"Voici le résultat de fonction 1/fonction 5 {z}")
-    return z
+    return fun
 
 # fin de la fonction 6
 
@@ -268,6 +268,8 @@ def getLose():
 def getAnotherSupport():
     return True
 
+# fin de la fonction 11
+
 def download_csv():
     csv_file = 'data.csv'
     # Utiliser tkinter pour demander à l'utilisateur où enregistrer le fichier
@@ -278,4 +280,4 @@ def download_csv():
         shutil.copyfile(csv_file, file_path)
         print(f"Fichier CSV téléchargé à l'emplacement : {file_path}")
 
-# fin de la fonction 12
+# fin de la fonction 2
