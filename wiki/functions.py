@@ -1,6 +1,4 @@
-# functions.py
 from urllib.error import HTTPError
-
 from SPARQLWrapper import SPARQLWrapper, JSON
 import os
 import csv
@@ -10,12 +8,16 @@ import shutil
 
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
 
-
 def getDomainCardinality(relation1):
-    #relation1 = input("Quelle est votre relation dont vous voulez savoir le nombre d'entités? (les relations sont entre P6 et P12615) \n" +
-                    #"Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
-                    #"Attention à mettre le P en majuscule \n")
+    """
+    Obtient le nombre d'entités distinctes pour une relation donnée.
 
+    Args:
+        relation1 (str): La relation à vérifier (par exemple, "P26").
+
+    Returns:
+        int: Le nombre d'entités distinctes pour la relation donnée.
+    """
     rel1 = f"""
     SELECT (COUNT(DISTINCT ?x) AS ?count)
     WHERE {{
@@ -35,17 +37,16 @@ def getDomainCardinality(relation1):
 
     return dom_R1
 
-# Fin de la fonction 1
+# fin de la fonction 1
 
 def getCoocurence(relation1, relation2):
-    # Demander les relations
-    #relation1 = input("Quelle est votre première relation ? (les relations sont entre P6 et P12615) \n" +
-                    #"Il peut y avoir des numéros qui ne sont liés à aucune relation \n" +
-                    #"Attention à mettre le P en majuscule \n")
+    """
+    Savoir combien d'entités ont deux relations particulières enregistre le résultat dans un fichier CSV.
 
-    #relation2 = input("Quelle est votre deuxième relation ? \n")
-
-    # Définir les requêtes SPARQL
+    Args:
+        relation1 (str): La première relation à vérifier.
+        relation2 (str): La deuxième relation à vérifier.
+    """
     liaison = f"""
     SELECT (COUNT(distinct ?x) AS ?count)
     WHERE {{
@@ -69,6 +70,13 @@ def getCoocurence(relation1, relation2):
     """
 
     def append_to_csv(file_path, data):
+        """
+        Ajoute des données à un fichier CSV, en évitant les doublons.
+
+        Args:
+            file_path (str): Le chemin du fichier CSV.
+            data (list): Les données à ajouter.
+        """
         file_exists = os.path.isfile(file_path)
         if file_exists:
             with open(file_path, mode='r', newline='') as file:
@@ -103,10 +111,16 @@ def getCoocurence(relation1, relation2):
     csv_file = 'data.csv'
     append_to_csv(csv_file, [relation1, relation2, dom_intersection, dom_R1, dom_R2])
 
-
 # fin de la fonction 3
 
 def getFunctionnalDependencies(element, property):
+    """
+    Vérifie si un élément a plusieurs relations distinctes pour une propriété donnée.
+
+    Args:
+        element (str): L'élément à vérifier (par exemple, "Q76" pour Barack Obama).
+        property (str): La propriété à vérifier (par exemple, "P40" pour parent).
+    """
     def check_multiple_relations(element, property):
         query = f"""
         SELECT (COUNT(DISTINCT ?y) AS ?count)
@@ -127,10 +141,6 @@ def getFunctionnalDependencies(element, property):
             return False
 
     while True:
-        # Demander à l'utilisateur de saisir l'élément et la propriété
-        #element = input("Quel est l'élément que vous voulez vérifier ? (par ex., Q76 pour Barack Obama) \n")
-        #property = input("Quelle est la propriété que vous voulez vérifier ? (par ex., P40 pour parent) \n")
-        
         # Vérifier si l'élément a plusieurs relations distinctes pour la propriété
         result = check_multiple_relations(element, property)
         print(f"L'élément {element} avec la propriété {property} a plusieurs relations distinctes: {result}")
@@ -143,6 +153,15 @@ def getFunctionnalDependencies(element, property):
 # fin de la fonction 4
 
 def getNumTuples(relation):
+    """
+    Obtient le nombre de tuples pour une relation donnée.
+
+    Args:
+        relation (str): La relation à vérifier (par exemple, "P40" pour parent).
+
+    Returns:
+        int: Le nombre de tuples liés par la relation donnée.
+    """
     def count_tuples(relation):
         query = f"""
         SELECT (COUNT(*) AS ?count)
@@ -154,13 +173,10 @@ def getNumTuples(relation):
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
-
         
         count = results['results']['bindings'][0]['count']['value']
         return count
-    
-        
-    #relation = input("Quelle est la relation que vous voulez vérifier ? (par ex., P40 pour parent) \n")
+
     count = count_tuples(relation)
     print(f"Le nombre de tuples liés par la relation {relation} est : {count}")
 
@@ -169,6 +185,15 @@ def getNumTuples(relation):
 # fin de la fonction 5
 
 def fun(relation):
+    """
+    Calcule le rapport entre le nombre d'entités distinctes et le nombre de tuples pour une relation donnée.
+
+    Args:
+        relation (str): La relation à vérifier.
+
+    Returns:
+        float: Le rapport entre le nombre d'entités distinctes et le nombre de tuples.
+    """
     DomainCardinality = int(getDomainCardinality(relation))
     NumTuples = int(getNumTuples(relation))
         
@@ -179,6 +204,17 @@ def fun(relation):
 # fin de la fonction 6
 
 def getSupport(relation1, relation2, relation3):
+    """
+    Obtient le nombre de situations où deux relations impliquent une troisième relation.
+
+    Args:
+        relation1 (str): La première relation.
+        relation2 (str): La deuxième relation.
+        relation3 (str): La troisième relation.
+
+    Returns:
+        int: Le nombre de situations où les deux premières relations impliquent la troisième.
+    """
     def check_implication(relation1, relation2, relation3):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -195,22 +231,25 @@ def getSupport(relation1, relation2, relation3):
         count = results['results']['bindings'][0]['count']['value']
         return count
 
-    # Demander les relations à l'utilisateur
-    #relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    #relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
-    #relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
-
-    # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2, relation3)
     print(f"Le nombre de situations où {relation1} et {relation2} impliquent {relation3} est : {result}")
 
-    return result 
+    return result
 
 # fin de la fonction 7
 
-
 def headCoverege(relation1, relation2, relation3):
+    """
+    Savoir le taux en poucentage pour lequel la fonction 7 renvoie True pour des relations particulières.
 
+    Args:
+        relation1 (str): La première relation.
+        relation2 (str): La deuxième relation.
+        relation3 (str): La troisième relation.
+
+    Returns:
+        float: La couverture de tête, ou un message d'erreur si le dénominateur est zéro.
+    """
     # Obtenir les résultats des fonctions externes
     support_count = int(getSupport(relation1, relation2, relation3))
     num_tuples = int(getNumTuples(relation1))
@@ -222,10 +261,17 @@ def headCoverege(relation1, relation2, relation3):
     print("\n", "Le résultat est de : ", division_result)
     return division_result
 
-# fin de la fonction 8 
-
+# fin de la fonction 8
 
 def getConfidence(relation1, relation2, relation3):
+    """
+    Donne le pourcentage réele entre entre 2 relation avec implication et 2 relation sans implication.
+
+    Args:
+        relation1 (str): La première relation.
+        relation2 (str): La deuxième relation.
+        relation3 (str): La troisième relation.
+    """
     support = int(getSupport(relation1, relation2, relation3))
     lose = int(getLose(relation1, relation2))
 
@@ -238,6 +284,16 @@ def getConfidence(relation1, relation2, relation3):
 # fin de la fonction 9
 
 def getLose(relation1, relation2):
+    """
+    Obtient le nombre de situations où deux relations sont impliquées.
+
+    Args:
+        relation1 (str): La première relation.
+        relation2 (str): La deuxième relation.
+
+    Returns:
+        int: Le nombre de situations où les deux relations sont impliquées.
+    """
     def check_implication(relation1, relation2):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -253,11 +309,6 @@ def getLose(relation1, relation2):
         count = results['results']['bindings'][0]['count']['value']
         return count
 
-    # Demander les relations à l'utilisateur
-    # relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    # relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
-
-    # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2)
     print(f"Le nombre de situations où {relation1} et {relation2} est : {result}")
 
@@ -266,6 +317,17 @@ def getLose(relation1, relation2):
 # fin de la fonction 10
 
 def getAnotherSupport(relation1, relation2, relation3):
+    """
+    Obtient le nombre de situations où deux relations impliquent une troisième relation, avec une entité différente pour la toisième relation.
+
+    Args:
+        relation1 (str): La première relation.
+        relation2 (str): La deuxième relation.
+        relation3 (str): La troisième relation.
+
+    Returns:
+        int: Le nombre de situations où les deux premières relations impliquent la troisième.
+    """
     def check_implication(relation1, relation2, relation3):
         sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
         query = f"""
@@ -282,20 +344,19 @@ def getAnotherSupport(relation1, relation2, relation3):
         count = results['results']['bindings'][0]['count']['value']
         return count
 
-    # Demander les relations à l'utilisateur
-    # relation1 = input("Entrez la première relation (par exemple, P26) : ")
-    # relation2 = input("Entrez la deuxième relation (par exemple, P40) : ")
-    # relation3 = input("Entrez la troisième relation (par exemple, P25) : ")
-
-    # Exécuter la fonction et afficher le résultat
     result = check_implication(relation1, relation2, relation3)
     print(f"Le nombre de situations où {relation1} et {relation2} impliquent {relation3} est : {result}")
 
-    return result 
+    return result
 
 # fin de la fonction 11
 
 def download_csv():
+    """
+    Télécharge le fichier CSV contenant les données.
+
+    Utilise tkinter pour demander à l'utilisateur où enregistrer le fichier.
+    """
     csv_file = 'data.csv'
     # Utiliser tkinter pour demander à l'utilisateur où enregistrer le fichier
     root = tk.Tk()

@@ -8,12 +8,12 @@ def main():
           "3. Savoir combien d'entités ont deux relations particulières \n",
           "4. Savoir si un élément a plusieurs fois la même relation \n",
           "5. Savoir le nombre de tuples liés par une relation \n",
-          "6. \n",
+          "6. Calcule le rapport entre le nombre d'entités distinctes et le nombre de tuples pour une relation donnée \n",
           "7. Savoir dans combien de cas deux relations en impliquent une troisème \n",
-          "8. \n",
-          "9. \n",
-          "10. \n",
-          "11. \n",
+          "8. Savoir le taux en poucentage pour lequel la fonction 7 renvoie True pour des relations particulières \n",
+          "9. Donne le pourcentage réele entre entre 2 relation avec implication et 2 relation sans implication \n",
+          "10. Savoir si une situation implique une deuxième \n",
+          "11. Savoir dans combien de cas deux relations en impliquent une troisème avec des entités différentes\n",
           )
 
     choice = input("Choisissez une option : ")
@@ -29,14 +29,14 @@ def main():
     elif choice == '5':
         getNumTuples("P40")
     elif choice == '6':
-        fun("P40")
+        fun("P40") 
     elif choice == '7':
         getSupport("P26","P40","P25")
     elif choice == '8':
         headCoverege("P26","P40","P25")
     elif choice == '9':
         getConfidence("P26","P40","P25")
-    elif choice == '10':
+    elif choice == '10':                                                
         getLose("P26","P40")
     elif choice == '11':
         getAnotherSupport("P26","P40","P25")
