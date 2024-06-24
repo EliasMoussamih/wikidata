@@ -5,8 +5,46 @@ import csv
 import tkinter as tk
 from tkinter import filedialog
 import shutil
+import re
+from typing import List, Tuple
+
+
+# Définir la classe Atom pour représenter chaque atome
+class Atom:
+    def __init__(self, relation: str, argumentLeft: str, argumentRight: str):
+        self.relation = relation
+        self.argumentLeft = argumentLeft
+        self.argumentRight = argumentRight
+
+    def __repr__(self):
+        return f"Atom(relation='{self.relation}', argumentLeft='{self.argumentLeft}', argumentRight='{self.argumentRight}')"
+
+def parse_horn_clause(rule: str) -> Tuple[List[Atom], Atom]:
+    body_part, head_part = rule.split(" => ")
+   
+    # Expression régulière pour extraire la relation et les arguments
+    atom_pattern = re.compile(r"(\w+)\((\w+)\s*,\s*(\w+)\)")
+   
+    # Parser la tête
+    head_match = atom_pattern.match(head_part)
+    if head_match:
+        head_atom = Atom(*head_match.groups())
+    else:
+        raise ValueError("Format de tête invalide")
+
+    # Parser le corps
+    body_atoms = []
+    for atom_str in body_part.split(", "):
+        body_match = atom_pattern.match(atom_str)
+        if body_match:
+            body_atoms.append(Atom(*body_match.groups()))
+        else:
+            raise ValueError("Format d'atome du corps invalide")
+   
+    return body_atoms, head_atom
 
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
+
 
 def getDomainCardinality(relation1):
     """
@@ -38,6 +76,8 @@ def getDomainCardinality(relation1):
     return dom_R1
 
 # fin de la fonction 1
+
+
 
 def getCoocurence(relation1, relation2):
     """
@@ -113,6 +153,8 @@ def getCoocurence(relation1, relation2):
 
 # fin de la fonction 3
 
+
+
 def getFunctionnalDependencies(element, property):
     """
     Vérifie si un élément a plusieurs relations distinctes pour une propriété donnée.
@@ -152,6 +194,8 @@ def getFunctionnalDependencies(element, property):
 
 # fin de la fonction 4
 
+
+
 def getNumTuples(relation):
     """
     Obtient le nombre de tuples pour une relation donnée.
@@ -184,6 +228,8 @@ def getNumTuples(relation):
 
 # fin de la fonction 5
 
+
+
 def fun(relation):
     """
     Calcule le rapport entre le nombre d'entités distinctes et le nombre de tuples pour une relation donnée.
@@ -202,6 +248,8 @@ def fun(relation):
     return fun
 
 # fin de la fonction 6
+
+
 
 def getSupport(relation1, relation2, relation3):
     """
@@ -232,11 +280,69 @@ def getSupport(relation1, relation2, relation3):
         return count
 
     result = check_implication(relation1, relation2, relation3)
-    print(f"Le nombre de situations où {relation1} et {relation2} impliquent {relation3} est : {result}")
+    print(f"Le nombre de sujet qui possède les {relation1} et {relation2} avec impliquation de la relation {relation3} est : {result}")
 
     return result
-
 # fin de la fonction 7
+
+
+
+def getSupportParseur(rule: str):
+    """
+    Obtient le nombre de situations où les relations dans le corps d'une règle de clause de Horn impliquent la relation dans la tête.
+
+    Args:
+        rule (str): La règle de clause de Horn au format "rel1(arg1Left, arg1Right), rel2(arg2Left, arg2Right) => head(argLeft, argRight)"
+
+    Returns:
+        int: Le nombre de situations où les relations dans le corps impliquent la relation dans la tête.
+    """
+    def check_implication(body_atoms, head_atom):
+        sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
+        
+        # Construire la partie WHERE de la requête SPARQL
+        where_clause = ""
+        variables = {}
+        for i, atom in enumerate(body_atoms):
+            var_left = f"?{atom.argumentLeft}"
+            var_right = f"?{atom.argumentRight}"
+            if atom.argumentLeft not in variables:
+                variables[atom.argumentLeft] = var_left
+            if atom.argumentRight not in variables:
+                variables[atom.argumentRight] = var_right
+            where_clause += f"{var_left} wdt:{atom.relation} {var_right} .\n"
+        
+        # Ajouter la tête de la clause
+        head_var_left = f"?{head_atom.argumentLeft}"
+        head_var_right = f"?{head_atom.argumentRight}"
+        if head_atom.argumentLeft not in variables:
+            variables[head_atom.argumentLeft] = head_var_left
+        if head_atom.argumentRight not in variables:
+            variables[head_atom.argumentRight] = head_var_right
+        where_clause += f"{head_var_left} wdt:{head_atom.relation} {head_var_right} .\n"
+        
+        query = f"""
+        SELECT (COUNT(?x) AS ?count)
+        WHERE {{
+        {where_clause}
+        }}
+        """
+        
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        
+        count = results['results']['bindings'][0]['count']['value']
+        return count
+
+    # Utiliser le parser pour obtenir les atomes du corps et de la tête
+    body_atoms, head_atom = parse_horn_clause(rule)
+    count = check_implication(body_atoms, head_atom)
+    print(f"Le nombre de situations où les relations dans le corps impliquent la relation dans la tête est : {count}")
+
+    return count
+
+# fin de la fonction 7 avec parseur
 
 def headCoverege(relation1, relation2, relation3):
     """
@@ -263,6 +369,8 @@ def headCoverege(relation1, relation2, relation3):
 
 # fin de la fonction 8
 
+
+
 def getConfidence(relation1, relation2, relation3):
     """
     Donne le pourcentage réele entre entre 2 relation avec implication et 2 relation sans implication.
@@ -277,11 +385,13 @@ def getConfidence(relation1, relation2, relation3):
 
     if lose != 0:
         confidence = support / lose
-        print(f"La confiance est : {confidence}")
+        print(f"Le résultat est de : {confidence}")
     else:
         print("Erreur : Division par zéro. Le dénominateur est zéro.")
 
 # fin de la fonction 9
+
+
 
 def getLose(relation1, relation2):
     """
@@ -310,11 +420,13 @@ def getLose(relation1, relation2):
         return count
 
     result = check_implication(relation1, relation2)
-    print(f"Le nombre de situations où {relation1} et {relation2} est : {result}")
+    print(f"Le nombre de sujets qui possède les relation {relation1} et {relation2} sans implication est : {result}")
 
     return result
 
 # fin de la fonction 10
+
+
 
 def getAnotherSupport(relation1, relation2, relation3):
     """
@@ -345,11 +457,13 @@ def getAnotherSupport(relation1, relation2, relation3):
         return count
 
     result = check_implication(relation1, relation2, relation3)
-    print(f"Le nombre de situations où {relation1} et {relation2} impliquent {relation3} est : {result}")
+    print(f"Le nombre de sujet qui possède les {relation1} et {relation2} avec impliquation de la relation {relation3} est : {result}")
 
     return result
 
 # fin de la fonction 11
+
+
 
 def download_csv():
     """
